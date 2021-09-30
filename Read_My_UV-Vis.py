@@ -105,10 +105,13 @@ if calculate_CF_concentration == True:
     pathlength = 1 # cm
     
     wv_450 = np.where(wavelengths == 450)[0][0]
-    wv_500 = np.where(wavelengths == 500)[0][0]
+    wv_550 = np.where(wavelengths == 550)[0][0]
+    wvrange = np.sort([wv_450, wv_550])
+    
     
     # find max absorbances for baselined sample
-    abs_max = np.max(absorbance_BC[wv_450:wv_500,:], axis=0)
+    peak_abs_range = absorbance_BC[wvrange[0]:wvrange[1]]
+    abs_max = np.max(peak_abs_range, axis=0)
     
     # pull out dilution factors from excel shet
     DF = pd.read_excel(fname, sheet_name=Dilution_Factors_SheetName)
