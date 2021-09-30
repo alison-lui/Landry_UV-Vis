@@ -14,8 +14,8 @@ Created on Mon Sep 20 17:04:20 2021
     versus dilution factor and return the bulk concencentration.
 """
 
-fname = r"G:\My Drive\Research\Landry Lab Summer Research 2021\AL Data\B2P80\UV Vis 2021-09-30\20210930_CF_Sample.xlsx"
-#fname = r"G:\My Drive\Research\Landry Lab Summer Research 2021\AL Data\B2P69_Concentrated_CF_in_HEPES_Stock\2021-09-20 UV Vis\2021-09-20_CF_in_HEPES_dilutions.xlsx"
+#fname = r"G:\My Drive\Research\Landry Lab Summer Research 2021\AL Data\B2P80\UV Vis 2021-09-30\20210930_CF_Sample.xlsx"
+fname = r"G:\My Drive\Research\Landry Lab Summer Research 2021\AL Data\B2P69_Concentrated_CF_in_HEPES_Stock\2021-09-20 UV Vis\2021-09-20_CF_in_HEPES_dilutions.xlsx"
 
 baseline_wavelength = [750, 800] #nm
 
@@ -108,7 +108,7 @@ if calculate_CF_concentration == True:
     wv_500 = np.where(wavelengths == 500)[0][0]
     
     # find max absorbances for baselined sample
-    abs_max = np.max(absorbance_BC[wv_500:wv_450], axis=0)
+    abs_max = np.max(absorbance_BC[wv_450:wv_500,:], axis=0)
     
     # pull out dilution factors from excel shet
     DF = pd.read_excel(fname, sheet_name=Dilution_Factors_SheetName)
