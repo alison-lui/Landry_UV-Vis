@@ -14,8 +14,8 @@ Created on Mon Sep 20 17:04:20 2021
     versus dilution factor and return the bulk concencentration.
 """
 
-#fname = r"G:\My Drive\Research\Landry Lab Summer Research 2021\AL Data\B2P80\UV Vis 2021-09-30\20210930_CF_Sample.xlsx"
-fname = r"G:\My Drive\Research\Landry Lab Summer Research 2021\AL Data\B2P69_Concentrated_CF_in_HEPES_Stock\2021-09-20 UV Vis\2021-09-20_CF_in_HEPES_dilutions.xlsx"
+fname = r"G:\My Drive\Research\Landry Lab Summer Research 2021\AL Data\B2P80\UV Vis 2021-09-30\20210930_CF_Sample.xlsx"
+#fname = r"G:\My Drive\Research\Landry Lab Summer Research 2021\AL Data\B2P69_Concentrated_CF_in_HEPES_Stock\2021-09-20 UV Vis\2021-09-20_CF_in_HEPES_dilutions.xlsx"
 
 baseline_wavelength = [750, 800] #nm
 
@@ -39,7 +39,7 @@ def makeplot(xdata, ydata, headers, title='', xlims=[300,600], ylims=[-0.1,1]):
     for i in np.arange(0,len(ydata[0])):
         ax.plot(xdata, ydata[:,i], label=headers[i])
         
-    ax.legend(bbox_to_anchor=(1.1, 1.05))
+    ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
     ax.set_xlabel('Wavelength (nm)')
     ax.set_ylabel('Absorbance')
     ax.set_title(title)
