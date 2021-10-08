@@ -14,9 +14,9 @@ Created on Mon Sep 20 17:04:20 2021
     versus dilution factor and return the bulk concencentration.
 """
 
-fname = r"G:\My Drive\Research\Landry Lab Summer Research 2021\AL Data\B2P84\UV-Vis 2021-10-08\2021-10-08_AuNP_supernatant.xlsx"
+fname = r"G:\My Drive\Research\Landry Lab Summer Research 2021\AL Data\B2P84\UV-Vis 2021-10-08\2021-10-08_qPCR_wells_from_10-07_overnight.xlsx"
 
-baseline_wavelength = [750, 800] #nm
+baseline_wavelength = [725, 775] #nm
 
 calculate_AuNP_concentration = True
 AuNP_size_in_nm              = 10 # 5 or 10
@@ -101,7 +101,7 @@ elif len(baseline_wavelength) == 2:
 
 # Plot baselined data with legend
 fig2, ax2 = plt.subplots()
-makeplot(wavelengths, absorbance_BC, headers, title = 'UV-Vis Baselined', AX=ax2)
+makeplot(wavelengths, absorbance_BC, headers, title = 'UV-Vis Baselined', ylims = [-0.1,1], AX=ax2)
 
 
 #######################################   
@@ -174,7 +174,7 @@ if calculate_AuNP_concentration == True:
 
 fig, ax4 = plt.subplots(round(len(headers)/2),2)
 ax4 = ax4.flatten()
-fig.set_size_inches(8, 6)
+fig.set_size_inches(11, 8)
 
 H,W = np.shape(absorbance_BC)
 for i in np.arange(0,W):
