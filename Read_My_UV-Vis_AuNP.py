@@ -14,12 +14,12 @@ Created on Mon Sep 20 17:04:20 2021
     versus dilution factor and return the bulk concencentration.
 """
 
-fname = r"G:\My Drive\Research\Landry Lab Summer Research 2021\AL Data\B2P63_AuNP_Dilution\2021-09-14 UV-Vis\2021-09-14_AuNP.xlsx"
+fname = r"G:\My Drive\Research\Landry Lab Summer Research 2021\AL Data\B2P84\UV-Vis 2021-10-08\2021-10-08_AuNP_supernatant.xlsx"
 
 baseline_wavelength = [750, 800] #nm
 
 calculate_AuNP_concentration = True
-AuNP_size_in_nm              = 10 # 5, 10, or 15
+AuNP_size_in_nm              = 10 # 5 or 10
 Dilution_Factors_SheetName = 'Sheet2' # must be in same file as fname
 
 #######################################
@@ -39,16 +39,20 @@ OD1_to_nM = {'5': 80.9800664451827, '10': 8.421052631578947}
 
 #######################################  
 
+fig,ax = plt.subplots()
 
-def makeplot(xdata, ydata, headers, title='', xlims=[400,1000], ylims=[-0.1,1]):
+def makeplot(xdata, ydata, headers, title='', AX=ax, xlims=[400,1000], ylims=[-0.1,1]):
     
-    for i in np.arange(0,len(ydata[0])):
-        ax.plot(xdata, ydata[:,i], label=headers[i])
+    if len(np.shape(ydata)) == 1: # There is only one column to plot 
+        AX.plot(xdata, ydata, label=headers[0])
+    else:        
+        for i in np.arange(0,np.shape(ydata)[1]):
+            AX.plot(xdata, ydata[:,i], label=headers[i])
         
-    ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-    ax.set_xlabel('Wavelength (nm)')
-    ax.set_ylabel('Absorbance')
-    ax.set_title(title)
+    AX.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+    AX.set_xlabel('Wavelength (nm)')
+    AX.set_ylabel('Absorbance')
+    AX.set_title(title)
     
     plt.xlim(xlims)
     plt.ylim(ylims)
@@ -70,6 +74,7 @@ headers = headers[1:]
 absorbance = absorbance[:,1:]
 
 #%%
+" RAW DATA PLOT"
 
 # Plot raw data with legend
 fig, ax = plt.subplots()
@@ -95,8 +100,8 @@ elif len(baseline_wavelength) == 2:
     absorbance_BC = absorbance - abs_correction
 
 # Plot baselined data with legend
-fig, ax = plt.subplots()
-makeplot(wavelengths, absorbance_BC, headers, title = 'UV-Vis Baselined')
+fig2, ax2 = plt.subplots()
+makeplot(wavelengths, absorbance_BC, headers, title = 'UV-Vis Baselined', AX=ax2)
 
 
 #######################################   
@@ -146,23 +151,44 @@ if calculate_AuNP_concentration == True:
         plt.annotate("Stock Concentration = {} nM".format(np.round(conc_avg, decimals = 5)), [np.unique(DF)*0.9, 0.8*np.max(abs_max)])
 
 
-    else:    
+    # Also, plot the baseline subtracted chart again with arrows to concentrations 
         
-        # convert max absorbances to concentrations
-        conc = abs_max * OD_conversion #nM
-        
-        
-        # add annotation to baselined plot
-        for i in np.arange(0,len(headers)):
-            ax.annotate('AuNP Conc = {} nM'.format(np.round(conc[i], decimals = 5)), xy=(wv_for_max_abs[i], abs_max[i]),  xycoords='data',
-                xytext=(wv_for_max_abs[i]+400, abs_max[i]),
-                arrowprops=dict(facecolor='black', shrink=0.05),
-                horizontalalignment='right', verticalalignment='top',
-                )
-        
+    # convert max absorbances to concentrations
+    conc = abs_max * OD_conversion #nM
+    
+    
+    # add annotation to baselined plot
+    for i in np.arange(0,len(headers)):
+        ax2.annotate('AuNP Conc = {} nM'.format(np.round(conc[i], decimals = 5)), xy=(wv_for_max_abs[i], abs_max[i]),  xycoords='data',
+            xytext=(wv_for_max_abs[i]+400, abs_max[i]),
+            arrowprops=dict(facecolor='black', shrink=0.05),
+            horizontalalignment='right', verticalalignment='top',
+            )
+    
+
+#%%
+
+# just for fun, plot 4 subplot
 
 
 
+fig, ax4 = plt.subplots(round(len(headers)/2),2)
+ax4 = ax4.flatten()
+fig.set_size_inches(8, 6)
+
+H,W = np.shape(absorbance_BC)
+for i in np.arange(0,W):
+    
+    ax4[i].plot(wavelengths, absorbance_BC[:,i])
+    ax4[i].set_title(headers[i])
+    
+    ax4[i].annotate('AuNP Conc = {} nM'.format(np.round(conc[i], decimals = 5)), xy=(wv_for_max_abs[i], abs_max[i]),  xycoords='data',
+            xytext=(wv_for_max_abs[i]+400, abs_max[i]),
+            arrowprops=dict(facecolor='black', shrink=0.05),
+            horizontalalignment='right', verticalalignment='top',
+            )
+
+plt.tight_layout()
 
 
 
