@@ -14,7 +14,7 @@ Created on Mon Sep 20 17:04:20 2021
     versus dilution factor and return the bulk concencentration.
 """
 
-fname = r"G:\My Drive\Research\Landry Lab Summer Research 2021\AL Data\B2P84\UV-Vis 2021-10-08\2021-10-08_qPCR_wells_from_10-07_overnight.xlsx"
+fname = r"/Volumes/GoogleDrive/My Drive/Research/Landry Lab Summer Research 2021/AL Data/B2P84/UV-Vis 2021-10-08/2021-10-08_qPCR_wells_from_10-07_overnight_headers_renamed.xlsx"
 
 baseline_wavelength = [725, 775] #nm
 
@@ -190,10 +190,47 @@ for i in np.arange(0,W):
 
 plt.tight_layout()
 
+#%%
+
+# Plot baselined graph with each compared
 
 
+fig, ax = plt.subplots()
+
+#index = [4,0,9]
+#index = [5,1,9]
+#index = [6,2,9]
+index = [7,3,9]
+for i in index:
+    ax.plot(wavelengths, absorbance_BC[:,i], label=headers[i])
+    
+combined = absorbance_BC[:,index[1]] + absorbance_BC[:,index[2]]
+#ax.plot(wavelengths, combined, label='combined orange and green curves')
+
+    
+ax.set_ylim([-0.1,1.0])    
+ax.legend(loc='upper right')
+ax.set_xlabel('Wavelength (nm)')
+ax.set_ylabel('Absorbance')
 
 
+#%%
+
+#Add together "HEPES + 4nm AuNP" and "CF-LUV + HEPES" and compare to 'CFLUV + 4nM AuNP'
+
+combined = absorbance_BC[:,0] + absorbance_BC[:,9]
+
+
+fig, ax = plt.subplots()
+
+ax.plot(wavelengths, combined, label='combined')
+ax.plot(wavelengths, absorbance_BC[:,4], label=headers[4])
+
+
+ax.set_ylim([-0.1,0.8])
+ax.legend(loc='upper right')
+ax.set_xlabel('Wavelength (nm)')
+ax.set_ylabel('Absorbance')
 
 
 
