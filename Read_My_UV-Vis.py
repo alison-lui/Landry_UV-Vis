@@ -14,10 +14,9 @@ Created on Mon Sep 20 17:04:20 2021
     versus dilution factor and return the bulk concencentration.
 """
 
-fname = r"G:\My Drive\Research\Landry Lab Summer Research 2021\AL Data\B2P80\UV Vis 2021-09-30\20210930_CF_Sample.xlsx"
-#fname = r"G:\My Drive\Research\Landry Lab Summer Research 2021\AL Data\B2P69_Concentrated_CF_in_HEPES_Stock\2021-09-20 UV Vis\2021-09-20_CF_in_HEPES_dilutions.xlsx"
+fname = r"G:\My Drive\Research\Landry Lab Summer Research 2021\AL Data\B2P110_CF_dilutions\2021-11-24 UV-Vis\CF Dilutions.xlsx"
 
-baseline_wavelength = [750, 800] #nm
+baseline_wavelength = [550, 600] #nm
 
 calculate_CF_concentration = True
 Dilution_Factors_SheetName = 'Sheet2' # must be in same file as fname
@@ -142,20 +141,40 @@ if calculate_CF_concentration == True:
 
     else:    
         
+        # convert absorbance maxes to concentrations
+        conc_max_M = [x / (CF_ext_coefficient * pathlength) for x in abs_max] # Molar
+        conc_max_mM = [x * 10**3 for x in conc_max_M]
+        conc_max_uM = [x * 10**6 for x in conc_max_M]
+       
+        
         # scatter plot of maximum absorbance of baselined sample to dilution factor
         fig, ax = plt.subplots()
         ax.scatter(DF,abs_max)
         
         # linear regression
         slope = np.polyfit(DF.astype(float), abs_max.astype(float), 1)[0]
+        intercept = np.polyfit(DF.astype(float), abs_max.astype(float), 1)[1]
         
         Xvals = np.linspace(0,np.max(DF))
         Yvals = Xvals * slope
+        YvalsInt = Xvals * slope + intercept
         
         ax.set_xlabel('Dilution Factor')
         ax.set_ylabel('Absorbance')
         ax.set_title('Calculating CF Concentration')
         ax.plot(Xvals, Yvals, label= "y = {}x".format(np.round(slope, decimals=0)))
+        ax.plot(Xvals, YvalsInt, label= "y = " + str(np.round(slope, decimals=0)) + "x + " + str(np.round(intercept, decimals=3)))
+        
+        # new fit with zero intercept
+        x = np.vstack([DF, np.ones(len(DF))]).T
+        a, _, _, _ = np.linalg.lstsq(x, abs_max)
+        
+        plt.plot(x, y, 'bo')
+        plt.plot(x, a*x, 'r-')
+        plt.show()
+        
+        
+        
         ax.legend()
         
         # At dilution factor 1, absorbance is expected to be:
@@ -166,9 +185,27 @@ if calculate_CF_concentration == True:
         
         plt.annotate("Stock Concentration = {} mM".format(np.round(conc_mM, decimals = 1)), [np.min(DF), 0.8*np.max(abs_max)])
 
+#%%
 
+x = np.array([0.1, 0.2, 0.4, 0.6, 0.8, 1.0, 2.0, 4.0, 6.0, 8.0, 10.0, 
+              20.0, 40.0, 60.0, 80.0])
 
+y = np.array([0.50505332505407008, 1.1207373784533172, 2.1981844719020001,
+              3.1746209003398689, 4.2905482471260044, 6.2816226678076958,
+              11.073788414382639, 23.248479770546009, 32.120462301367183, 
+              44.036117671229206, 54.009003143831116, 102.7077685684846, 
+              185.72880217806673, 256.12183145545811, 301.97120103079675])
 
+# Our model is y = a * x, so things are quite simple, in this case...
+# x needs to be a column vector instead of a 1D vector for this, however.
+x = x[:,np.newaxis]
+a, _, _, _ = np.linalg.lstsq(x, y)
+
+plt.plot(x, y, 'bo')
+plt.plot(x, a*x, 'r-')
+plt.show()
+
+        
 
 
 
