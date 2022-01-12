@@ -203,6 +203,11 @@ if calculate_All_CF_concentrations == True:
     results = results.T
     print(results)     
     
+    # save table of concentration data in excel in same folder
+    dirname = os.path.dirname(fname)
+    savefile = os.path.join(dirname,"results.xlsx")    
+    results.to_excel(savefile)  
+    
     
     
     
