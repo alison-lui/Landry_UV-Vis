@@ -217,9 +217,9 @@ if calculate_All_CF_concentrations == True:
     conc_nM = [x * 10**9 for x in conc_M] # uM
     
     # convert to dataframe
-    results = pd.DataFrame([conc_M,conc_mM,conc_uM, conc_nM],
+    results = pd.DataFrame([abs_max, conc_M,conc_mM,conc_uM, conc_nM],
                            columns=headers, 
-                           index=['M conc.', 'mM conc.', 'uM conc.', 'nM conc.'])
+                           index=['Max Absorbance','M conc.', 'mM conc.', 'uM conc.', 'nM conc.'])
     results = results.T
     print(results)     
     
