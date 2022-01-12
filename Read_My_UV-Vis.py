@@ -14,11 +14,12 @@ Created on Mon Sep 20 17:04:20 2021
     versus dilution factor and return the bulk concencentration.
 """
 
-fname = r"G:\My Drive\Research\Landry Lab Summer Research 2021\AL Data\B2P110_CF_dilutions\2021-11-24 UV-Vis\CF Dilutions.xlsx"
+fname = r"G:\My Drive\Research\Landry Lab Summer Research 2021\AL Data\B2P123\UV-Vis 12-21\2021-12-21 Free CF Samples.xlsx"
 
 baseline_wavelength = [550, 600] #nm
 
-calculate_CF_concentration = True
+calculate_Stock_CF_concentration = False
+calculate_All_CF_concentrations = True
 Dilution_Factors_SheetName = 'Sheet2' # must be in same file as fname
 
 #######################################
@@ -27,6 +28,7 @@ import pandas as pd
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+from tabulate import tabulate
 import os
 import sys
  
@@ -96,21 +98,20 @@ makeplot(wavelengths, absorbance_BC, headers, title = 'UV-Vis Baselined')
 #%%
 # Calculate CF Concentration from linear regression data
 
-if calculate_CF_concentration == True:
-    
-    " Beer's Law: A = e*L*C "
-    
-    CF_ext_coefficient = 74000	# M^-1 cm^-1
-    pathlength = 1 # cm
-    
-    wv_450 = np.where(wavelengths == 450)[0][0]
-    wv_550 = np.where(wavelengths == 550)[0][0]
-    wvrange = np.sort([wv_450, wv_550])
-    
-    
-    # find max absorbances for baselined sample
-    peak_abs_range = absorbance_BC[wvrange[0]:wvrange[1]]
-    abs_max = np.max(peak_abs_range, axis=0)
+" Beer's Law: A = e*L*C "
+
+CF_ext_coefficient = 74000	# M^-1 cm^-1
+pathlength = 1 # cm
+
+wv_450 = np.where(wavelengths == 450)[0][0]
+wv_550 = np.where(wavelengths == 550)[0][0]
+wvrange = np.sort([wv_450, wv_550])
+
+# find max absorbances for baselined sample
+peak_abs_range = absorbance_BC[wvrange[0]:wvrange[1]]
+abs_max = np.max(peak_abs_range, axis=0)
+
+if calculate_Stock_CF_concentration == True:
     
     # pull out dilution factors from excel shet
     DF = pd.read_excel(fname, sheet_name=Dilution_Factors_SheetName)
@@ -185,32 +186,26 @@ if calculate_CF_concentration == True:
         
         plt.annotate("Stock Concentration = {} mM".format(np.round(conc_mM, decimals = 1)), [np.min(DF), 0.8*np.max(abs_max)])
 
-#%%
+#%% Calculate individual CF concentrations and print out table
 
-x = np.array([0.1, 0.2, 0.4, 0.6, 0.8, 1.0, 2.0, 4.0, 6.0, 8.0, 10.0, 
-              20.0, 40.0, 60.0, 80.0])
-
-y = np.array([0.50505332505407008, 1.1207373784533172, 2.1981844719020001,
-              3.1746209003398689, 4.2905482471260044, 6.2816226678076958,
-              11.073788414382639, 23.248479770546009, 32.120462301367183, 
-              44.036117671229206, 54.009003143831116, 102.7077685684846, 
-              185.72880217806673, 256.12183145545811, 301.97120103079675])
-
-# Our model is y = a * x, so things are quite simple, in this case...
-# x needs to be a column vector instead of a 1D vector for this, however.
-x = x[:,np.newaxis]
-a, _, _, _ = np.linalg.lstsq(x, y)
-
-plt.plot(x, y, 'bo')
-plt.plot(x, a*x, 'r-')
-plt.show()
-
-        
-
-
-
-
-
+if calculate_All_CF_concentrations == True:
+    
+    #convert max absorbance (after baseline) to concentration
+    conc_M  = [x / (CF_ext_coefficient * pathlength) for x in abs_max] # Molar
+    conc_mM = [x * 10**3 for x in conc_M] # mM
+    conc_uM = [x * 10**6 for x in conc_M] # uM
+    conc_nM = [x * 10**9 for x in conc_M] # uM
+    
+    # convert to dataframe
+    results = pd.DataFrame([conc_M,conc_mM,conc_uM, conc_nM],
+                           columns=headers, 
+                           index=['M conc.', 'mM conc.', 'uM conc.', 'nM conc.'])
+    results = results.T
+    print(results)     
+    
+    
+    
+    
 
 
 
