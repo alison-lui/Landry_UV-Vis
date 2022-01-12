@@ -47,10 +47,15 @@ def makeplot(xdata, ydata, headers, title='', xlims=[300,600], ylims=[-0.1,1]):
     
     plt.xlim(xlims)
     plt.ylim(ylims)
+    
+    plt.tight_layout()
 
 #######################################   
 #%%
 " FORMAT DATA "
+
+# Extract directory name
+dirname = os.path.dirname(fname)
 
 # Convert to DataFrame, extract headers
 absorbance = pd.read_excel(fname)
@@ -69,6 +74,9 @@ absorbance = absorbance[:,1:]
 # Plot raw data with legend
 fig, ax = plt.subplots()
 makeplot(wavelengths, absorbance, headers, title = 'UV-Vis')
+
+saverawimage = os.path.join(dirname, "Raw Data.jpg")
+plt.savefig(saverawimage)
 
 
  ####################################### 
@@ -92,6 +100,18 @@ elif len(baseline_wavelength) == 2:
 # Plot baselined data with legend
 fig, ax = plt.subplots()
 makeplot(wavelengths, absorbance_BC, headers, title = 'UV-Vis Baselined')
+
+# Save Plot
+saveimage1 = os.path.join(dirname, "Baselined Data.jpg")
+plt.savefig(saveimage1)
+
+# Plot baselined data with zoomed in ylims
+fig, ax = plt.subplots()
+makeplot(wavelengths, absorbance_BC, headers, title = 'UV-Vis Baselined', ylims=[None,None])
+
+# Save Plot
+saveimage2 = os.path.join(dirname, "Baselined Data Zoom-In.jpg")
+plt.savefig(saveimage2)
 
 
 #######################################   
@@ -204,7 +224,6 @@ if calculate_All_CF_concentrations == True:
     print(results)     
     
     # save table of concentration data in excel in same folder
-    dirname = os.path.dirname(fname)
     savefile = os.path.join(dirname,"results.xlsx")    
     results.to_excel(savefile)  
     
