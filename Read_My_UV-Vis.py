@@ -14,23 +14,21 @@ Created on Mon Sep 20 17:04:20 2021
     versus dilution factor and return the bulk concencentration.
 """
 
-fname = r"G:\My Drive\Research\Landry Lab Summer Research 2021\AL Data\B2P123\UV-Vis 12-21\2021-12-21 Free CF Samples.xlsx"
+fname = r"G:\My Drive\Research\Landry Lab Summer Research 2021\AL Data\B2P174 - CF in WI Solution UV-Vis\2022-03-10 UV-Vis\CF+WI in 20mM HEPES.xlsx"
 
 baseline_wavelength = [550, 600] #nm
 
-calculate_Stock_CF_concentration = False
-calculate_All_CF_concentrations = True
+calculate_Stock_CF_concentration = True
+calculate_All_CF_concentrations = False
 Dilution_Factors_SheetName = 'Sheet2' # must be in same file as fname
 
 #######################################
 
-import pandas as pd
+
 import numpy as np
-import matplotlib as mpl
+import pandas as pd
 import matplotlib.pyplot as plt
-from tabulate import tabulate
 import os
-import sys
  
 #######################################  
 
@@ -183,19 +181,17 @@ if calculate_Stock_CF_concentration == True:
         ax.set_xlabel('Dilution Factor')
         ax.set_ylabel('Absorbance')
         ax.set_title('Calculating CF Concentration')
-        ax.plot(Xvals, Yvals, label= "y = {}x".format(np.round(slope, decimals=0)))
+#        ax.plot(Xvals, Yvals, label= "y = {}x".format(np.round(slope, decimals=0)))
         ax.plot(Xvals, YvalsInt, label= "y = " + str(np.round(slope, decimals=0)) + "x + " + str(np.round(intercept, decimals=3)))
         
         # new fit with zero intercept
-        x = np.vstack([DF, np.ones(len(DF))]).T
-        a, _, _, _ = np.linalg.lstsq(x, abs_max)
+#       x = np.vstack([DF, np.ones(len(DF))]).T
+#        a, _, _, _ = np.linalg.lstsq(x, abs_max)
         
-        plt.plot(x, y, 'bo')
-        plt.plot(x, a*x, 'r-')
-        plt.show()
-        
-        
-        
+#        plt.plot(x, y, 'bo')
+#        plt.plot(x, a*x, 'r-')
+#        plt.show()
+
         ax.legend()
         
         # At dilution factor 1, absorbance is expected to be:
